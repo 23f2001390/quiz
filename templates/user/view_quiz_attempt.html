@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Attempt - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>{{ quiz.title }} - Your Attempt</h2>
+        <p class="text-muted">
+            Subject: {{ quiz.chapter.subject.name }} | 
+            Chapter: {{ quiz.chapter.name }}
+        </p>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Score Summary -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Score Summary</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h3>{{ score.score }}/{{ score.total_questions }}</h3>
+                        <p class="text-muted">Questions Correct</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>
+                            {% if score.total_questions > 0 %}
+                                {{ (score.score / score.total_questions * 100)|round|int }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </h3>
+                        <p class="text-muted">Percentage</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>{{ (score.time_taken / 60)|round|int }}:{{ '%02d' % (score.time_taken % 60) }}</h3>
+                        <p class="text-muted">Time Taken</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Review -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Questions Review</h4>
+            </div>
+            <div class="card-body">
+                {% for question in questions %}
+                <div class="question-review mb-4 p-3 border rounded">
+                    <h5>Question {{ loop.index }}</h5>
+                    <p>{{ question.question_text }}</p>
+                    
+                    <div class="options-list ml-4">
+                        <div class="option {% if question.correct_option == 1 %}text-success{% endif %}">
+                            1. {{ question.option_1 }}
+                            {% if question.correct_option == 1 %}
+                                <span class="badge badge-success">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div class="option {% if question.correct_option == 2 %}text-success{% endif %}">
+                            2. {{ question.option_2 }}
+                            {% if question.correct_option == 2 %}
+                                <span class="badge badge-success">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div class="option {% if question.correct_option == 3 %}text-success{% endif %}">
+                            3. {{ question.option_3 }}
+                            {% if question.correct_option == 3 %}
+                                <span class="badge badge-success">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div class="option {% if question.correct_option == 4 %}text-success{% endif %}">
+                            4. {{ question.option_4 }}
+                            {% if question.correct_option == 4 %}
+                                <span class="badge badge-success">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

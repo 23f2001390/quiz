@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}My Scores{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>My Performance</h2>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+{% if total_quizzes > 0 %}
+<!-- Performance Summary -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ total_quizzes }}</h3>
+                <p class="text-muted mb-0">Total Quizzes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ "%.1f"|format(average_score) }}%</h3>
+                <p class="text-muted mb-0">Average Score</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ total_score }}/{{ total_questions }}</h3>
+                <p class="text-muted mb-0">Total Score</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ "%.1f"|format(highest_score) }}%</h3>
+                <p class="text-muted mb-0">Highest Score</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>Subject-wise Number of Quizzes</h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Number of Quizzes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for label, value in zip(subject_chart.labels, subject_chart.data) %}
+                        <tr>
+                            <td>{{ label }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>Month-wise Quizzes Attempted</h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for label, value in zip(month_stats.labels, month_stats.data) %}
+                        <tr>
+                            <td>{{ label }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quiz History -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Quiz History</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Quiz</th>
+                                <th>Subject</th>
+                                <th>Chapter</th>
+                                <th>Score</th>
+                                <th>Percentage</th>
+                                <th>Time Taken</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for score in scores %}
+                            <tr>
+                                <td>{{ score.quiz.title }}</td>
+                                <td>{{ score.quiz.chapter.subject.name }}</td>
+                                <td>{{ score.quiz.chapter.name }}</td>
+                                <td>{{ score.score }}/{{ score.total_questions }}</td>
+                                <td>
+                                    {% if score.total_questions > 0 %}
+                                        {{ "%.1f"|format(score.score / score.total_questions * 100) }}%
+                                    {% else %}
+                                        0.0%
+                                    {% endif %}
+                                </td>
+                                <td>{{ (score.time_taken / 60)|int }}:{{ '%02d'|format(score.time_taken % 60) }}</td>
+                                <td>{{ score.attempted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('user.view_quiz_attempt', quiz_id=score.quiz_id) }}" 
+                                       class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <h4 class="text-muted">No quiz attempts yet.</h4>
+        <p>Start taking quizzes to see your performance statistics here.</p>
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-primary">Browse Available Quizzes</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

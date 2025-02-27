@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Welcome, {{ current_user.full_name }}</h2>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('user.view_scores') }}" class="btn btn-info">View My Scores</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <a href="{{ url_for('user.search') }}" class="btn btn-primary">
+            <i class="fas fa-search"></i> Search
+        </a>
+        <a href="{{ url_for('user.view_scores') }}" class="btn btn-info">
+            <i class="fas fa-chart-bar"></i> My Scores
+        </a>
+    </div>
+</div>
+
+<!-- Upcoming Quizzes -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Upcoming Quizzes</h4>
+            </div>
+            <div class="card-body">
+                {% set has_upcoming = false %}
+                {% for subject in subjects %}
+                    {% for chapter in subject.chapters %}
+                        {% for quiz in chapter.quizzes %}
+                            {% if quiz.date_of_quiz > current_time and quiz.id not in completed_quiz_ids %}
+                                {% set has_upcoming = true %}
+                                <div class="quiz-item mb-3 p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>{{ quiz.title }}</h5>
+                                            <p class="text-muted mb-0">
+                                                Subject: {{ subject.name }} | 
+                                                Chapter: {{ chapter.name }}
+                                            </p>
+                                            <p class="text-muted mb-0">
+                                                Date: {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }} | 
+                                                Duration: {{ quiz.duration_minutes }} minutes
+                                            </p>
+                                        </div>
+                                        <a href="{{ url_for('user.view_quiz', id=quiz.id) }}" 
+                                           class="btn btn-primary">Start Quiz</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+                {% if not has_upcoming %}
+                    <p class="text-muted">No upcoming quizzes available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Subjects and Chapters -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Available Subjects</h4>
+            </div>
+            <div class="card-body">
+                {% for subject in subjects %}
+                <div class="subject-section mb-4">
+                    <h3>{{ subject.name }}</h3>
+                    <p class="text-muted">{{ subject.description }}</p>
+                    
+                    {% if subject.chapters %}
+                    <div class="chapters-list">
+                        {% for chapter in subject.chapters %}
+                        <div class="chapter-item mb-3">
+                            <h4>{{ chapter.name }}</h4>
+                            <p>{{ chapter.description }}</p>
+                            
+                            {% if chapter.quizzes %}
+                            <div class="quizzes-list">
+                                {% for quiz in chapter.quizzes %}
+                                <div class="quiz-item mb-2">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ quiz.title }}</h5>
+                                            <p class="card-text">{{ quiz.description }}</p>
+                                            <p class="text-muted">
+                                                Date: {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }} |
+                                                Duration: {{ quiz.duration_minutes }} minutes
+                                            </p>
+                                            <a href="{{ url_for('user.view_quiz', id=quiz.id) }}" class="btn btn-primary">View Quiz</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-muted">No quizzes available for this chapter.</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No chapters available for this subject.</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Search</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST">
+                {{ form.csrf_token }}
+                
+                <div class="form-group">
+                    {{ form.search_query.label }}
+                    {{ form.search_query(class="form-control") }}
+                    {% for error in form.search_query.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.search_type.label }}
+                    {{ form.search_type(class="form-control") }}
+                    {% for error in form.search_type.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if results %}
+    <div class="mt-4">
+        <h3>Search Results</h3>
+        
+        {% if form.search_type.data == 'subjects' %}
+        <div class="row">
+            {% for subject in results %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ subject.name }}</h5>
+                        <p class="card-text">{{ subject.description }}</p>
+                        <p class="card-text">
+                            <small class="text-muted">{{ subject.chapters|length }} chapters</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% elif form.search_type.data == 'quizzes' %}
+        <div class="row">
+            {% for quiz in results %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ quiz.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            {{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}
+                        </h6>
+                        <p class="card-text">{{ quiz.description }}</p>
+                        <p class="card-text">
+                            <small class="text-muted">Date: {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </p>
+                        <a href="{{ url_for('user.view_quiz', id=quiz.id) }}" class="btn btn-primary">View Quiz</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if not results %}
+        <p class="text-muted">No results found.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>{{ quiz.title }}</h2>
+        <p class="text-muted">
+            Subject: {{ quiz.chapter.subject.name }} | 
+            Chapter: {{ quiz.chapter.name }}
+        </p>
+        <p class="text-muted">
+            Date: {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }} | 
+            Duration: {{ quiz.duration_minutes }} minutes
+        </p>
+        <p>{{ quiz.description }}</p>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('user.attempt_quiz', quiz_id=quiz.id) }}" 
+           class="btn btn-primary btn-lg">Start Quiz</a>
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Quiz Instructions</h4>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>This quiz contains {{ quiz.questions.all()|length }} multiple choice questions.</li>
+                    <li>Each question has exactly one correct answer.</li>
+                    <li>You have {{ quiz.duration_minutes }} minutes to complete the quiz.</li>
+                    <li>The timer will start as soon as you click "Start Quiz".</li>
+                    <li>You cannot pause the timer once the quiz starts.</li>
+                    <li>Make sure you have a stable internet connection.</li>
+                    <li>Do not refresh the page or navigate away during the quiz.</li>
+                    <li>Click "Submit Quiz" when you're done or the quiz will auto-submit when time runs out.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
