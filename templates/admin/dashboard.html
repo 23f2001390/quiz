@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Admin Dashboard</h2>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('admin.create_subject') }}" class="btn btn-primary">Add Subject</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <a href="{{ url_for('admin.search') }}" class="btn btn-primary">
+            <i class="fas fa-search"></i> Search
+        </a>
+        <a href="{{ url_for('admin.list_users') }}" class="btn btn-info">
+            <i class="fas fa-users"></i> Manage Users
+        </a>
+        <a href="{{ url_for('admin.statistics') }}" class="btn btn-success">
+            <i class="fas fa-chart-bar"></i> View Statistics
+        </a>
+    </div>
+</div>
+
+<!-- Subjects and Chapters -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Subjects and Chapters</h4>
+            </div>
+            <div class="card-body">
+                {% for subject in subjects %}
+                <div class="subject-section mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>{{ subject.name }}</h5>
+                        <div>
+                            <a href="{{ url_for('admin.edit_subject', id=subject.id) }}" class="btn btn-sm btn-info">Edit</a>
+                            <a href="{{ url_for('admin.delete_subject', id=subject.id) }}" class="btn btn-sm btn-danger" 
+                               onclick="return confirm('Are you sure you want to delete this subject?')">Delete</a>
+                            <a href="{{ url_for('admin.create_chapter', subject_id=subject.id) }}" class="btn btn-sm btn-success">Add Chapter</a>
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ subject.description }}</p>
+                    
+                    <!-- Chapters -->
+                    <div class="chapters-list ml-4">
+                        {% for chapter in subject.chapters %}
+                        <div class="chapter-item mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6>{{ chapter.name }}</h6>
+                                <div>
+                                    <a href="{{ url_for('admin.edit_chapter', id=chapter.id) }}" class="btn btn-sm btn-info">Edit</a>
+                                    <a href="{{ url_for('admin.delete_chapter', id=chapter.id) }}" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete this chapter?')">Delete</a>
+                                    <a href="{{ url_for('admin.create_quiz', chapter_id=chapter.id) }}" class="btn btn-sm btn-success">Add Quiz</a>
+                                </div>
+                            </div>
+                            <p class="text-muted small">{{ chapter.description }}</p>
+                            
+                            <!-- Quizzes -->
+                            <div class="quizzes-list ml-4">
+                                {% for quiz in chapter.quizzes %}
+                                <div class="quiz-item mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ url_for('admin.view_quiz', id=quiz.id) }}">{{ quiz.title }}</a>
+                                        <div>
+                                            <span class="badge badge-info">{{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</span>
+                                            <span class="badge badge-warning">{{ quiz.duration_minutes }} mins</span>
+                                            <a href="{{ url_for('admin.edit_quiz', id=quiz.id) }}" class="btn btn-sm btn-info">Edit</a>
+                                            <a href="{{ url_for('admin.delete_quiz', id=quiz.id) }}" class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Are you sure you want to delete this quiz?')">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Users List -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Registered Users</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Qualification</th>
+                                <th>Date of Birth</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.full_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.qualification }}</td>
+                                <td>{{ user.date_of_birth.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

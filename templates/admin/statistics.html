@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Quiz Master Statistics</h2>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_users }}</h3>
+                    <p class="text-muted mb-0">Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_quizzes }}</h3>
+                    <p class="text-muted mb-0">Total Quizzes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_attempts }}</h3>
+                    <p class="text-muted mb-0">Quiz Attempts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Subject-wise Top Scores</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="topScoresChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Subject-wise User Participation</h4>
+                    <small class="text-muted">Shows user engagement levels for each subject</small>
+                </div>
+                <div class="card-body">
+                    <canvas id="attemptsChart"></canvas>
+                </div>
+                <div class="card-footer">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="dot" style="background-color: rgba(255, 206, 86, 0.5);"></div>
+                            <small>Total Users</small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dot" style="background-color: rgba(54, 162, 235, 0.5);"></div>
+                            <small>Attempted Subject</small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dot" style="background-color: rgba(255, 99, 132, 0.5);"></div>
+                            <small>Completed All</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dot {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts using Python configurations
+    new Chart(document.getElementById('topScoresChart'), {{ top_scores_chart_config | tojson | safe }});
+    new Chart(document.getElementById('attemptsChart'), {{ attempts_chart_config | tojson | safe }});
+});
+</script>
+{% endblock %} 
