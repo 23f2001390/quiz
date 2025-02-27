@@ -103,7 +103,7 @@ quiz_master/
 
 ## Setup Instructions
 
-1. Create a virtual environment:
+1. (Optional)Create a virtual environment:
    ```bash
    # On Windows
    python -m venv venv
@@ -116,17 +116,17 @@ quiz_master/
 
 2. Install dependencies:
    ```bash
-   uv pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
 3. Initialize the database:
    ```bash
-   uv run init_db.py
+   python init_db.py
    ```
 
 4. Run the application:
    ```bash
-   uv run app.py
+   python app.py
    ```
 
 5. Access the application:
@@ -135,6 +135,26 @@ quiz_master/
      - Email: admin@quizmaster.com
      - Password: admin123
 
+# If the above shows any error use:
+
+1. ```bash
+   uv venv
+   ```
+2. ```bash
+   uv pip install -r requirements.txt
+   ```
+3. ```bash
+   uv run init_db.py
+   ```
+4. ```bash
+   uv run app.py
+   ```
+5. Access the application:
+   - Open your browser and go to `http://localhost:5000`
+   - For admin access, use:
+     - Email: admin@quizmaster.com
+     - Password: admin123
+    
 ## Usage Guide
 
 ### For Administrators
